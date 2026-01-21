@@ -123,7 +123,7 @@ module ElevenRb
     # @raise [Errors::VoiceSlotLimitError] if no voices to remove
     def remove_lru!
       lru_voice = least_recently_used
-      raise Errors::VoiceSlotLimitError, "No voices available to remove" unless lru_voice
+      raise Errors::VoiceSlotLimitError, 'No voices available to remove' unless lru_voice
 
       client.voices.destroy(lru_voice.voice_id)
       @usage_tracker.delete(lru_voice.voice_id)

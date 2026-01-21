@@ -8,14 +8,14 @@ module ElevenRb
       #
       # @return [Boolean]
       def has_more?
-        raw_response["has_more"] == true
+        raw_response['has_more'] == true
       end
 
       # Get the cursor for next page
       #
       # @return [String, nil]
       def next_cursor
-        raw_response["last_sort_id"]
+        raw_response['last_sort_id']
       end
 
       # Find voice by ID
@@ -83,7 +83,7 @@ module ElevenRb
       private
 
       def parse_items(response)
-        voices = response["voices"] || []
+        voices = response['voices'] || []
         voices.map { |v| Objects::LibraryVoice.from_response(v) }
       end
     end

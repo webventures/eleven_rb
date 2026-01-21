@@ -70,7 +70,7 @@ module ElevenRb
       private
 
       def parse_items(response)
-        voices = response["voices"] || response || []
+        voices = response['voices'] || response || []
         voices.map { |v| Objects::Voice.from_response(v) }
       end
     end

@@ -22,14 +22,11 @@ module ElevenRb
       # Note: This requires checking voices.list count
       #
       # @return [Integer, nil]
-      def voice_slots_used
-        @voice_slots_used
-      end
+      attr_accessor :voice_slots_used
 
       # Set voice slots used (called by VoiceSlotManager)
       #
       # @param count [Integer]
-      attr_writer :voice_slots_used
 
       # Get available voice slots
       #
@@ -62,7 +59,7 @@ module ElevenRb
       #
       # @return [Float]
       def characters_used_percentage
-        return 0.0 unless character_limit && character_limit.positive?
+        return 0.0 unless character_limit&.positive?
 
         (character_count.to_f / character_limit * 100).round(1)
       end
@@ -80,14 +77,14 @@ module ElevenRb
       #
       # @return [Boolean]
       def active?
-        status == "active"
+        status == 'active'
       end
 
       # Check if this is a free tier
       #
       # @return [Boolean]
       def free?
-        tier&.downcase == "free"
+        tier&.downcase == 'free'
       end
     end
   end

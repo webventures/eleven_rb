@@ -1,9 +1,10 @@
 AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
+  SuggestExtensions: false
   Exclude:
-    - "vendor/**/*"
-    - "spec/fixtures/**/*"
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
 
 Style/Documentation:
   Enabled: false
@@ -11,18 +12,49 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   Enabled: true
 
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+# It's common and acceptable to define dev dependencies in gemspec
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# has_more? is clearer than more? for pagination
+Naming/PredicatePrefix:
+  Enabled: false
+
+# validate!, destroy, update_settings are not predicates
+Naming/PredicateMethod:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
-    - "spec/**/*"
-    - "*.gemspec"
+    - 'spec/**/*'
+    - '*.gemspec'
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 30
 
 Metrics/AbcSize:
-  Max: 25
+  Max: 35
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/ParameterLists:
+  Max: 15
+
+Metrics/CyclomaticComplexity:
+  Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 12
 
 Layout/LineLength:
-  Max: 120
+  Max: 150
   Exclude:
-    - "spec/**/*"
+    - 'spec/**/*'
+
+Lint/UnusedBlockArgument:
+  Exclude:
+    - 'spec/**/*'

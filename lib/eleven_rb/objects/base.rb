@@ -78,7 +78,7 @@ module ElevenRb
       #
       # @return [String]
       def inspect
-        attrs = @attributes.map { |k, v| "#{k}=#{v.inspect}" }.join(", ")
+        attrs = @attributes.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
         "#<#{self.class.name} #{attrs}>"
       end
     end

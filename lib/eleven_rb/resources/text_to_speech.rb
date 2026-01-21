@@ -13,7 +13,7 @@ module ElevenRb
     #     io.write(chunk)
     #   end
     class TextToSpeech < Base
-      DEFAULT_MODEL = "eleven_multilingual_v2"
+      DEFAULT_MODEL = 'eleven_multilingual_v2'
       MAX_TEXT_LENGTH = 5000
 
       OUTPUT_FORMATS = %w[
@@ -34,9 +34,9 @@ module ElevenRb
       # @param voice_settings [Hash] voice settings overrides
       # @param output_format [String] audio output format
       # @return [Objects::Audio]
-      def generate(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {}, output_format: "mp3_44100_128")
+      def generate(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {}, output_format: 'mp3_44100_128')
         validate_text!(text)
-        validate_presence!(voice_id, "voice_id")
+        validate_presence!(voice_id, 'voice_id')
 
         settings = Objects::VoiceSettings::DEFAULTS.merge(voice_settings)
 
@@ -79,10 +79,10 @@ module ElevenRb
       # @param output_format [String] audio output format
       # @yield [String] each chunk of audio data
       # @return [void]
-      def stream(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {}, output_format: "mp3_44100_128", &block)
+      def stream(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {}, output_format: 'mp3_44100_128', &block)
         validate_text!(text)
-        validate_presence!(voice_id, "voice_id")
-        raise ArgumentError, "Block required for streaming" unless block_given?
+        validate_presence!(voice_id, 'voice_id')
+        raise ArgumentError, 'Block required for streaming' unless block_given?
 
         settings = Objects::VoiceSettings::DEFAULTS.merge(voice_settings)
 
@@ -114,9 +114,10 @@ module ElevenRb
       # @param voice_settings [Hash] voice settings overrides
       # @param output_format [String] audio output format
       # @return [Hash] contains :audio and :alignment data
-      def generate_with_timestamps(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {}, output_format: "mp3_44100_128")
+      def generate_with_timestamps(text, voice_id:, model_id: DEFAULT_MODEL, voice_settings: {},
+                                   output_format: 'mp3_44100_128')
         validate_text!(text)
-        validate_presence!(voice_id, "voice_id")
+        validate_presence!(voice_id, 'voice_id')
 
         settings = Objects::VoiceSettings::DEFAULTS.merge(voice_settings)
 
@@ -130,7 +131,7 @@ module ElevenRb
         response = post(path, body)
 
         # Decode base64 audio
-        audio_data = Base64.decode64(response["audio_base64"]) if response["audio_base64"]
+        audio_data = Base64.decode64(response['audio_base64']) if response['audio_base64']
 
         audio = if audio_data
                   Objects::Audio.new(
@@ -144,18 +145,19 @@ module ElevenRb
 
         {
           audio: audio,
-          alignment: response["alignment"]
+          alignment: response['alignment']
         }
       end
 
       private
 
       def validate_text!(text)
-        validate_presence!(text, "text")
+        validate_presence!(text, 'text')
 
-        if text.length > MAX_TEXT_LENGTH
-          raise Errors::ValidationError, "text exceeds maximum length of #{MAX_TEXT_LENGTH} characters (got #{text.length})"
-        end
+        return unless text.length > MAX_TEXT_LENGTH
+
+        raise Errors::ValidationError,
+              "text exceeds maximum length of #{MAX_TEXT_LENGTH} characters (got #{text.length})"
       end
     end
   end

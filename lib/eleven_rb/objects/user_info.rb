@@ -17,7 +17,7 @@ module ElevenRb
       #
       # @return [String]
       def display_name
-        first_name || email&.split("@")&.first || "User"
+        first_name || email&.split('@')&.first || 'User'
       end
     end
   end

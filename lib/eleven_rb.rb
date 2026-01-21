@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "httparty"
-require "json"
-require "base64"
+require 'httparty'
+require 'json'
+require 'base64'
 
 # ElevenRb - A Ruby client for the ElevenLabs Text-to-Speech API
 #
@@ -35,7 +35,7 @@ module ElevenRb
     # @yield [Configuration] the configuration object
     # @return [Client]
     def configure
-      config = Configuration.new(api_key: ENV["ELEVENLABS_API_KEY"])
+      config = Configuration.new(api_key: ENV.fetch('ELEVENLABS_API_KEY', nil))
       yield config if block_given?
       config.validate!
       @client = Client.new(**config_to_options(config))
@@ -74,40 +74,40 @@ module ElevenRb
 end
 
 # Core modules
-require_relative "eleven_rb/version"
-require_relative "eleven_rb/errors"
-require_relative "eleven_rb/callbacks"
-require_relative "eleven_rb/instrumentation"
-require_relative "eleven_rb/configuration"
+require_relative 'eleven_rb/version'
+require_relative 'eleven_rb/errors'
+require_relative 'eleven_rb/callbacks'
+require_relative 'eleven_rb/instrumentation'
+require_relative 'eleven_rb/configuration'
 
 # HTTP layer
-require_relative "eleven_rb/http/client"
+require_relative 'eleven_rb/http/client'
 
 # Response objects
-require_relative "eleven_rb/objects/base"
-require_relative "eleven_rb/objects/voice_settings"
-require_relative "eleven_rb/objects/voice"
-require_relative "eleven_rb/objects/audio"
-require_relative "eleven_rb/objects/model"
-require_relative "eleven_rb/objects/subscription"
-require_relative "eleven_rb/objects/user_info"
-require_relative "eleven_rb/objects/library_voice"
-require_relative "eleven_rb/objects/cost_info"
+require_relative 'eleven_rb/objects/base'
+require_relative 'eleven_rb/objects/voice_settings'
+require_relative 'eleven_rb/objects/voice'
+require_relative 'eleven_rb/objects/audio'
+require_relative 'eleven_rb/objects/model'
+require_relative 'eleven_rb/objects/subscription'
+require_relative 'eleven_rb/objects/user_info'
+require_relative 'eleven_rb/objects/library_voice'
+require_relative 'eleven_rb/objects/cost_info'
 
 # Collections
-require_relative "eleven_rb/collections/base"
-require_relative "eleven_rb/collections/voice_collection"
-require_relative "eleven_rb/collections/library_voice_collection"
+require_relative 'eleven_rb/collections/base'
+require_relative 'eleven_rb/collections/voice_collection'
+require_relative 'eleven_rb/collections/library_voice_collection'
 
 # Resources
-require_relative "eleven_rb/resources/base"
-require_relative "eleven_rb/resources/voices"
-require_relative "eleven_rb/resources/text_to_speech"
-require_relative "eleven_rb/resources/voice_library"
-require_relative "eleven_rb/resources/models"
-require_relative "eleven_rb/resources/user"
+require_relative 'eleven_rb/resources/base'
+require_relative 'eleven_rb/resources/voices'
+require_relative 'eleven_rb/resources/text_to_speech'
+require_relative 'eleven_rb/resources/voice_library'
+require_relative 'eleven_rb/resources/models'
+require_relative 'eleven_rb/resources/user'
 
 # High-level components
-require_relative "eleven_rb/voice_slot_manager"
-require_relative "eleven_rb/tts_adapter"
-require_relative "eleven_rb/client"
+require_relative 'eleven_rb/voice_slot_manager'
+require_relative 'eleven_rb/tts_adapter'
+require_relative 'eleven_rb/client'

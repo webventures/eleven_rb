@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "httparty"
-require "json"
+require 'httparty'
+require 'json'
 
 module ElevenRb
   module HTTP
@@ -66,7 +66,8 @@ module ElevenRb
 
       private
 
-      def request(method, path, body: nil, params: nil, response_type: :json, multipart: false, stream: false, attempt: 1, &block)
+      def request(method, path, body: nil, params: nil, response_type: :json, multipart: false, stream: false,
+                  attempt: 1, &block)
         url = "#{config.base_url}#{path}"
         start_time = Time.now
 
@@ -93,11 +94,13 @@ module ElevenRb
         rescue Errors::ServerError => e
           handle_retry(e, method, path, body, params, response_type, multipart, stream, attempt, &block)
         rescue Errors::Base => e
-          config.trigger(:on_error, error: e, method: method, path: path, context: { body: sanitize_body_for_logging(body) })
+          config.trigger(:on_error, error: e, method: method, path: path,
+                                    context: { body: sanitize_body_for_logging(body) })
           raise
         rescue StandardError => e
           wrapped_error = wrap_error(e)
-          config.trigger(:on_error, error: wrapped_error, method: method, path: path, context: { body: sanitize_body_for_logging(body) })
+          config.trigger(:on_error, error: wrapped_error, method: method, path: path,
+                                    context: { body: sanitize_body_for_logging(body) })
           raise wrapped_error
         end
       end
@@ -127,11 +130,11 @@ module ElevenRb
         options[:query] = params if params && !params.empty?
 
         if body && !body.empty?
-          if multipart
-            options[:body] = build_multipart_body(body)
-          else
-            options[:body] = body.to_json
-          end
+          options[:body] = if multipart
+                             build_multipart_body(body)
+                           else
+                             body.to_json
+                           end
         end
 
         if stream && block_given?
@@ -144,10 +147,10 @@ module ElevenRb
 
       def headers(multipart = false)
         h = {
-          "xi-api-key" => config.api_key,
-          "Accept" => "application/json"
+          'xi-api-key' => config.api_key,
+          'Accept' => 'application/json'
         }
-        h["Content-Type"] = "application/json" unless multipart
+        h['Content-Type'] = 'application/json' unless multipart
         h
       end
 
@@ -194,11 +197,11 @@ module ElevenRb
         error_kwargs = {
           http_status: status,
           response_body: body,
-          error_code: body["error_code"]
+          error_code: body['error_code']
         }
 
         if error_class == Errors::RateLimitError
-          retry_after = response.headers["retry-after"]&.to_i
+          retry_after = response.headers['retry-after']&.to_i
           error_kwargs[:retry_after] = retry_after
         end
 
@@ -206,9 +209,7 @@ module ElevenRb
       end
 
       def handle_retry(error, method, path, body, params, response_type, multipart, stream, attempt, &block)
-        if attempt > config.max_retries || !config.retry_statuses.include?(error.http_status)
-          raise error
-        end
+        raise error if attempt > config.max_retries || !config.retry_statuses.include?(error.http_status)
 
         delay = if error.is_a?(Errors::RateLimitError) && error.retry_after
                   error.retry_after
@@ -220,7 +221,8 @@ module ElevenRb
 
         sleep(delay)
 
-        request(method, path, body: body, params: params, response_type: response_type, multipart: multipart, stream: stream, attempt: attempt + 1, &block)
+        request(method, path,
+                body: body, params: params, response_type: response_type, multipart: multipart, stream: stream, attempt: attempt + 1, &block)
       end
 
       def wrap_error(error)
@@ -247,14 +249,14 @@ module ElevenRb
       end
 
       def extract_error_message(body)
-        detail = body["detail"]
+        detail = body['detail']
         case detail
         when Hash
-          detail["message"] || detail["status"] || detail.to_s
+          detail['message'] || detail['status'] || detail.to_s
         when String
           detail
         else
-          body["message"] || body["error"] || "Unknown error"
+          body['message'] || body['error'] || 'Unknown error'
         end
       end
 

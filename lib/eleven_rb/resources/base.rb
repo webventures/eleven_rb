@@ -75,9 +75,9 @@ module ElevenRb
       # @param name [String]
       # @raise [Errors::ValidationError]
       def validate_presence!(value, name)
-        if value.nil? || (value.respond_to?(:empty?) && value.empty?)
-          raise Errors::ValidationError, "#{name} cannot be blank"
-        end
+        return unless value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+        raise Errors::ValidationError, "#{name} cannot be blank"
       end
     end
   end

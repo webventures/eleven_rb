@@ -26,7 +26,7 @@ module ElevenRb
       def supports_language?(language_code)
         return false unless languages
 
-        languages.any? { |l| l["language_id"] == language_code }
+        languages.any? { |l| l['language_id'] == language_code }
       end
 
       # Get list of supported language codes
@@ -35,21 +35,21 @@ module ElevenRb
       def supported_language_codes
         return [] unless languages
 
-        languages.map { |l| l["language_id"] }
+        languages.map { |l| l['language_id'] }
       end
 
       # Check if this is a multilingual model
       #
       # @return [Boolean]
       def multilingual?
-        name&.downcase&.include?("multilingual") || supported_language_codes.size > 1
+        name&.downcase&.include?('multilingual') || supported_language_codes.size > 1
       end
 
       # Check if this is a turbo/fast model
       #
       # @return [Boolean]
       def turbo?
-        name&.downcase&.include?("turbo") || model_id&.include?("turbo")
+        name&.downcase&.include?('turbo') || model_id&.include?('turbo')
       end
     end
   end

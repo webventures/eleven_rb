@@ -15,7 +15,7 @@ module ElevenRb
       #
       # @return [Objects::Subscription]
       def subscription
-        response = get("/user/subscription")
+        response = get('/user/subscription')
         Objects::Subscription.from_response(response)
       end
 
@@ -23,7 +23,7 @@ module ElevenRb
       #
       # @return [Objects::UserInfo]
       def info
-        response = get("/user")
+        response = get('/user')
         Objects::UserInfo.from_response(response)
       end
 

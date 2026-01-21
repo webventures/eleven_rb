@@ -20,42 +20,42 @@ module ElevenRb
       #
       # @return [String, nil]
       def gender
-        labels&.dig("gender")
+        labels&.dig('gender')
       end
 
       # Get the accent from labels
       #
       # @return [String, nil]
       def accent
-        labels&.dig("accent")
+        labels&.dig('accent')
       end
 
       # Get the language from labels
       #
       # @return [String, nil]
       def language
-        labels&.dig("language")
+        labels&.dig('language')
       end
 
       # Get the age from labels
       #
       # @return [String, nil]
       def age
-        labels&.dig("age")
+        labels&.dig('age')
       end
 
       # Get the use case from labels
       #
       # @return [String, nil]
       def use_case
-        labels&.dig("use_case")
+        labels&.dig('use_case')
       end
 
       # Check if this voice is banned
       #
       # @return [Boolean]
       def banned?
-        safety_control == "BAN"
+        safety_control == 'BAN'
       end
 
       # Provider identifier for wrapper compatibility
@@ -79,7 +79,7 @@ module ElevenRb
         parts = [name]
         parts << "(#{gender})" if gender
         parts << "- #{accent || language}" if accent || language
-        parts.join(" ")
+        parts.join(' ')
       end
     end
   end

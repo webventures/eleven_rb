@@ -85,7 +85,7 @@ module ElevenRb
       # @param response [Hash] the API response
       # @return [Array]
       def parse_items(response)
-        raise NotImplementedError, "Subclasses must implement #parse_items"
+        raise NotImplementedError, 'Subclasses must implement #parse_items'
       end
     end
   end

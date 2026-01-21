@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "stringio"
+require 'stringio'
 
 module ElevenRb
   module Objects
@@ -59,17 +59,17 @@ module ElevenRb
       def content_type
         case format
         when /mp3/
-          "audio/mpeg"
+          'audio/mpeg'
         when /pcm/
-          "audio/pcm"
+          'audio/pcm'
         when /ogg/
-          "audio/ogg"
+          'audio/ogg'
         when /wav/
-          "audio/wav"
+          'audio/wav'
         when /flac/
-          "audio/flac"
+          'audio/flac'
         else
-          "application/octet-stream"
+          'application/octet-stream'
         end
       end
 
@@ -79,17 +79,17 @@ module ElevenRb
       def extension
         case format
         when /mp3/
-          "mp3"
+          'mp3'
         when /pcm/
-          "pcm"
+          'pcm'
         when /ogg/
-          "ogg"
+          'ogg'
         when /wav/
-          "wav"
+          'wav'
         when /flac/
-          "flac"
+          'flac'
         else
-          "bin"
+          'bin'
         end
       end
 

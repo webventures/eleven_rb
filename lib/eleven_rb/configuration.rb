@@ -16,7 +16,7 @@ module ElevenRb
     include Callbacks
 
     DEFAULTS = {
-      base_url: "https://api.elevenlabs.io/v1",
+      base_url: 'https://api.elevenlabs.io/v1',
       timeout: 120,
       open_timeout: 10,
       max_retries: 3,
@@ -63,7 +63,8 @@ module ElevenRb
     # @return [true]
     def validate!
       if api_key.nil? || api_key.to_s.empty?
-        raise Errors::ConfigurationError, "API key is required. Set via api_key option or ELEVENLABS_API_KEY environment variable."
+        raise Errors::ConfigurationError,
+              'API key is required. Set via api_key option or ELEVENLABS_API_KEY environment variable.'
       end
 
       true
@@ -74,7 +75,7 @@ module ElevenRb
     # @return [Hash]
     def to_h
       {
-        api_key: api_key ? "[REDACTED]" : nil,
+        api_key: api_key ? '[REDACTED]' : nil,
         base_url: base_url,
         timeout: timeout,
         open_timeout: open_timeout,

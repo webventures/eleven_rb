@@ -59,7 +59,7 @@ module ElevenRb
           language: language,
           locale: locale,
           search: search,
-          use_cases: use_cases&.join(","),
+          use_cases: use_cases&.join(','),
           featured: featured,
           reader_app_enabled: reader_app_enabled,
           owner_id: owner_id,
@@ -67,7 +67,7 @@ module ElevenRb
           cursor: page
         }.compact
 
-        response = get("/shared-voices", params)
+        response = get('/shared-voices', params)
         Collections::LibraryVoiceCollection.from_response(response)
       end
 
@@ -78,20 +78,20 @@ module ElevenRb
       # @param name [String] the name to give the voice in your account
       # @return [Objects::Voice]
       def add(public_user_id:, voice_id:, name:)
-        validate_presence!(public_user_id, "public_user_id")
-        validate_presence!(voice_id, "voice_id")
-        validate_presence!(name, "name")
+        validate_presence!(public_user_id, 'public_user_id')
+        validate_presence!(voice_id, 'voice_id')
+        validate_presence!(name, 'name')
 
         response = post("/voices/add/#{public_user_id}/#{voice_id}", { new_name: name })
 
         # Trigger callback
-        http_client.config.trigger(:on_voice_added, voice_id: response["voice_id"], name: name)
+        http_client.config.trigger(:on_voice_added, voice_id: response['voice_id'], name: name)
 
         # Return a Voice object with the info we have
         Objects::Voice.from_response({
-          "voice_id" => response["voice_id"],
-          "name" => name
-        })
+                                       'voice_id' => response['voice_id'],
+                                       'name' => name
+                                     })
       end
 
       # Search for voices by keyword
@@ -108,7 +108,7 @@ module ElevenRb
       # @param options [Hash] additional search options
       # @return [Collections::LibraryVoiceCollection]
       def spanish(**options)
-        search(language: "Spanish", **options)
+        search(language: 'Spanish', **options)
       end
 
       # Get all professional voices
@@ -116,7 +116,7 @@ module ElevenRb
       # @param options [Hash] additional search options
       # @return [Collections::LibraryVoiceCollection]
       def professional(**options)
-        search(category: "professional", **options)
+        search(category: 'professional', **options)
       end
 
       # Iterate through all pages of results
@@ -124,7 +124,7 @@ module ElevenRb
       # @param options [Hash] search options
       # @yield [Collections::LibraryVoiceCollection] each page of results
       # @return [Enumerator] if no block given
-      def each_page(**options, &block)
+      def each_page(**options)
         return enum_for(:each_page, **options) unless block_given?
 
         cursor = nil

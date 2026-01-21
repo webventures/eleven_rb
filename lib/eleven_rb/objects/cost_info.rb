@@ -9,14 +9,14 @@ module ElevenRb
       # Approximate cost per 1000 characters by model
       # These are estimates and may vary by subscription tier
       COST_PER_1K_CHARS = {
-        "eleven_monolingual_v1" => 0.30,
-        "eleven_multilingual_v1" => 0.30,
-        "eleven_multilingual_v2" => 0.30,
-        "eleven_turbo_v2" => 0.18,
-        "eleven_turbo_v2_5" => 0.18,
-        "eleven_english_sts_v2" => 0.30,
-        "eleven_flash_v2" => 0.10,
-        "eleven_flash_v2_5" => 0.10
+        'eleven_monolingual_v1' => 0.30,
+        'eleven_multilingual_v1' => 0.30,
+        'eleven_multilingual_v2' => 0.30,
+        'eleven_turbo_v2' => 0.18,
+        'eleven_turbo_v2_5' => 0.18,
+        'eleven_english_sts_v2' => 0.30,
+        'eleven_flash_v2' => 0.10,
+        'eleven_flash_v2_5' => 0.10
       }.freeze
 
       DEFAULT_COST_PER_1K = 0.30
@@ -52,7 +52,7 @@ module ElevenRb
       #
       # @return [Boolean]
       def turbo_model?
-        model_id&.include?("turbo") || model_id&.include?("flash")
+        model_id&.include?('turbo') || model_id&.include?('flash')
       end
 
       # Convert to hash

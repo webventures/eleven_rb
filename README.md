@@ -1,6 +1,10 @@
 # ElevenRb
 
-A Ruby client for the [ElevenLabs](https://elevenlabs.io) Text-to-Speech API.
+[![Gem Version](https://badge.fury.io/rb/eleven_rb.svg)](https://badge.fury.io/rb/eleven_rb)
+[![CI](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml/badge.svg)](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech API.
 
 ## Features
 
@@ -12,6 +16,11 @@ A Ruby client for the [ElevenLabs](https://elevenlabs.io) Text-to-Speech API.
 - Automatic retry with configurable backoff
 - Structured response objects
 - Future-ready adapter for multi-provider wrapper gems
+
+## Requirements
+
+- Ruby >= 3.0
+- An [ElevenLabs API key](https://elevenlabs.io/app/settings/api-keys)
 
 ## Installation
 
@@ -272,22 +281,31 @@ audio = ElevenRb.client.tts.generate("Hello", voice_id: "abc123")
 | Scale | 660 |
 | Business | 660 |
 
+## References
+
+- [ElevenLabs API Documentation](https://elevenlabs.io/docs/api-reference)
+- [ElevenLabs Developer Portal](https://try.elevenlabs.io/qyk2j8gumrjz)
+- [Voice Library](https://elevenlabs.io/voice-library)
+
+## Changelog
+
+For a detailed list of changes for each version of this project, please see the [CHANGELOG](CHANGELOG.md).
+
 ## Development
 
+After checking out the repo, run `bundle install` to install dependencies. Then, run `bundle exec rspec` to run the tests. You can also run `bundle exec rake console` for an interactive prompt that will allow you to experiment.
+
 ```bash
-# Install dependencies
-bundle install
-
-# Run tests
-bundle exec rspec
-
-# Run linter
-bundle exec rubocop
-
-# Start console
-bundle exec rake console
+bundle install          # Install dependencies
+bundle exec rspec       # Run tests
+bundle exec rubocop     # Run linter
+bundle exec rake build  # Build gem
 ```
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/webventures/eleven_rb.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+The gem is available as open source under the terms of the [MIT License](LICENSE).

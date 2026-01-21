@@ -31,7 +31,7 @@ module ElevenRb
     # @see Configuration#initialize for all available options
     def initialize(api_key: nil, **options)
       @config = Configuration.new(
-        api_key: api_key || ENV["ELEVENLABS_API_KEY"],
+        api_key: api_key || ENV.fetch('ELEVENLABS_API_KEY', nil),
         **options
       )
       @config.validate!

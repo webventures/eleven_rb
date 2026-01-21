@@ -44,7 +44,7 @@ module ElevenRb
         parts = [name]
         parts << "(#{gender})" if gender
         parts << "- #{accent || language}" if accent || language
-        parts.join(" ")
+        parts.join(' ')
       end
 
       # Check if this voice is popular (high usage)

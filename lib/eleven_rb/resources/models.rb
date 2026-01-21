@@ -14,7 +14,7 @@ module ElevenRb
       #
       # @return [Array<Objects::Model>]
       def list
-        response = get("/models")
+        response = get('/models')
         response.map { |m| Objects::Model.from_response(m) }
       end
 
@@ -51,7 +51,7 @@ module ElevenRb
       #
       # @return [Objects::Model, nil]
       def default
-        get("eleven_multilingual_v2") || tts_capable.first
+        get('eleven_multilingual_v2') || tts_capable.first
       end
 
       # Get model IDs as array
