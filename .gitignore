@@ -1,0 +1,44 @@
+# Gem build artifacts
+*.gem
+pkg/
+
+# Bundler
+/.bundle/
+vendor/bundle/
+
+# Coverage reports
+/coverage/
+
+# IDE/Editor files
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+.claude/
+CLAUDE.md
+
+# RSpec
+.rspec_status
+
+# Temporary files
+tmp/
+*.tmp
+
+# Documentation artifacts
+/doc/
+.yardoc/
+
+# Mac OS
+.DS_Store
+
+# Ignore Gemfile.lock for gems
+Gemfile.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test artifacts
+spec/fixtures/vcr_cassettes/*.yml
