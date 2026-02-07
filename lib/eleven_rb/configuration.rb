@@ -57,6 +57,13 @@ module ElevenRb
       end
     end
 
+    # Check if the configuration has an API key
+    #
+    # @return [Boolean]
+    def configured?
+      !api_key.nil? && !api_key.to_s.empty?
+    end
+
     # Validate the configuration
     #
     # @raise [Errors::ConfigurationError] if configuration is invalid

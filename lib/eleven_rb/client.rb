@@ -34,8 +34,14 @@ module ElevenRb
         api_key: api_key || ENV.fetch('ELEVENLABS_API_KEY', nil),
         **options
       )
-      @config.validate!
       @http_client = HTTP::Client.new(@config)
+    end
+
+    # Check if the client is configured with an API key
+    #
+    # @return [Boolean]
+    def configured?
+      config.configured?
     end
 
     # Voice management resource
@@ -73,6 +79,13 @@ module ElevenRb
       @user ||= Resources::User.new(http_client)
     end
 
+    # Sound effects resource
+    #
+    # @return [Resources::SoundEffects]
+    def sound_effects
+      @sound_effects ||= Resources::SoundEffects.new(http_client)
+    end
+
     # Voice slot manager
     #
     # @return [VoiceSlotManager]
@@ -88,6 +101,15 @@ module ElevenRb
     # @return [Objects::Audio]
     def generate_speech(text, voice_id:, **options)
       tts.generate(text, voice_id: voice_id, **options)
+    end
+
+    # Convenience method: generate sound effect
+    #
+    # @param text [String] description of the sound effect
+    # @param options [Hash] additional options
+    # @return [Objects::Audio]
+    def generate_sound_effect(text, **options)
+      sound_effects.generate(text, **options)
     end
 
     # Convenience method: stream speech

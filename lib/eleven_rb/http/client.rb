@@ -68,6 +68,7 @@ module ElevenRb
 
       def request(method, path, body: nil, params: nil, response_type: :json, multipart: false, stream: false,
                   attempt: 1, &block)
+        config.validate!
         url = "#{config.base_url}#{path}"
         start_time = Time.now
 

@@ -55,4 +55,9 @@ module ElevenRb
     class ConnectionError < Base; end
     class TimeoutError < ConnectionError; end
   end
+
+  # Top-level error alias for conventional rescue usage
+  # @example
+  #   rescue ElevenRb::Error => e
+  Error = Errors::Base
 end

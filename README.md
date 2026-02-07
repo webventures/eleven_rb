@@ -4,11 +4,12 @@
 [![CI](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml/badge.svg)](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech API.
+A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech and Sound Effects API.
 
 ## Features
 
 - Text-to-Speech generation and streaming
+- Sound effects generation from text descriptions
 - Voice management (list, get, create, update, delete)
 - Voice Library access (search 10,000+ community voices)
 - Voice Slot Manager for automatic slot management within account limits
@@ -84,6 +85,28 @@ File.open("output.mp3", "wb") do |file|
     file.write(chunk)
   end
 end
+```
+
+### Sound Effects
+
+```ruby
+# Generate a sound effect from a text description
+audio = client.sound_effects.generate("thunder rumbling in the distance")
+audio.save_to_file("thunder.mp3")
+
+# With options
+audio = client.sound_effects.generate(
+  "footsteps on gravel",
+  duration_seconds: 3.0,
+  prompt_influence: 0.5,
+  output_format: "mp3_44100_192"
+)
+
+# Generate a loopable sound effect
+audio = client.sound_effects.generate("gentle rain", loop: true)
+
+# Convenience method
+audio = client.generate_sound_effect("explosion")
 ```
 
 ### Voice Management
@@ -248,9 +271,19 @@ rescue ElevenRb::Errors::ValidationError => e
 rescue ElevenRb::Errors::APIError => e
   puts "API error: #{e.message} (status: #{e.http_status})"
 end
+
+# Or use the top-level alias to catch all ElevenRb errors
+begin
+  audio = client.tts.generate("Hello", voice_id: "abc123")
+rescue ElevenRb::Error => e
+  puts "Something went wrong: #{e.message}"
+end
 ```
 
 ## Rails Integration
+
+The client can be initialized without an API key and won't raise until the first API call,
+making it safe to use in test/CI environments where the key may not be set.
 
 ```ruby
 # config/initializers/eleven_rb.rb

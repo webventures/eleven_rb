@@ -7,8 +7,12 @@ RSpec.describe ElevenRb::Client do
       expect(client.config.api_key).to eq('test-key')
     end
 
-    it 'raises an error without an API key' do
-      expect { described_class.new }.to raise_error(ElevenRb::Errors::ConfigurationError)
+    it 'does not raise without an API key until first API call' do
+      client = described_class.new
+      expect(client).to be_a(described_class)
+
+      stub_request(:get, 'https://api.elevenlabs.io/v1/voices')
+      expect { client.voices.list }.to raise_error(ElevenRb::Errors::ConfigurationError)
     end
 
     it 'accepts configuration options' do
@@ -60,8 +64,41 @@ RSpec.describe ElevenRb::Client do
       expect(client.voice_slots).to be_a(ElevenRb::VoiceSlotManager)
     end
 
+    it 'provides sound_effects resource' do
+      expect(client.sound_effects).to be_a(ElevenRb::Resources::SoundEffects)
+    end
+
     it 'memoizes resource instances' do
       expect(client.voices).to eq(client.voices)
+    end
+  end
+
+  describe '#configured?' do
+    it 'returns true when API key is present' do
+      client = described_class.new(api_key: 'test-key')
+      expect(client.configured?).to be true
+    end
+
+    it 'returns false without an API key' do
+      client = described_class.new
+      expect(client.configured?).to be false
+    end
+
+    it 'returns false with an empty string API key' do
+      client = described_class.new(api_key: '')
+      expect(client.configured?).to be false
+    end
+  end
+
+  describe '#generate_sound_effect' do
+    let(:client) { described_class.new(api_key: 'test-key') }
+
+    it 'delegates to sound_effects.generate' do
+      stub_elevenlabs_binary_request(:post, '/sound-generation?output_format=mp3_44100_128',
+                                     response_body: 'sfx audio data')
+
+      audio = client.generate_sound_effect('explosion')
+      expect(audio).to be_a(ElevenRb::Objects::Audio)
     end
   end
 
