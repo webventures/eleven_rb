@@ -42,3 +42,6 @@ Gemfile.lock
 
 # Test artifacts
 spec/fixtures/vcr_cassettes/*.yml
+
+# Private development files
+.private

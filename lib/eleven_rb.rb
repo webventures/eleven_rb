@@ -106,6 +106,7 @@ require_relative 'eleven_rb/resources/text_to_speech'
 require_relative 'eleven_rb/resources/voice_library'
 require_relative 'eleven_rb/resources/models'
 require_relative 'eleven_rb/resources/user'
+require_relative 'eleven_rb/resources/sound_effects'
 
 # High-level components
 require_relative 'eleven_rb/voice_slot_manager'
