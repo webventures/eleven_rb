@@ -86,6 +86,13 @@ module ElevenRb
       @sound_effects ||= Resources::SoundEffects.new(http_client)
     end
 
+    # Music generation resource
+    #
+    # @return [Resources::Music]
+    def music
+      @music ||= Resources::Music.new(http_client)
+    end
+
     # Voice slot manager
     #
     # @return [VoiceSlotManager]
@@ -110,6 +117,15 @@ module ElevenRb
     # @return [Objects::Audio]
     def generate_sound_effect(text, **options)
       sound_effects.generate(text, **options)
+    end
+
+    # Convenience method: generate music
+    #
+    # @param prompt [String] description of the music to generate
+    # @param options [Hash] additional options
+    # @return [Objects::Audio]
+    def generate_music(prompt, **options)
+      music.generate(prompt, **options)
     end
 
     # Convenience method: stream speech
