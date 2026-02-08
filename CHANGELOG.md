@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-08
+
+### Added
+
+- Music generation via `client.music.generate` (`POST /v1/music`)
+- Music streaming via `client.music.stream` (`POST /v1/music/stream`)
+- Composition plan creation via `client.music.create_plan` (`POST /v1/music/plan`)
+- `Client#generate_music` convenience method
+
 ## [0.2.0] - 2026-02-07
 
 ### Added

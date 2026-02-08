@@ -4,12 +4,13 @@
 [![CI](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml/badge.svg)](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech and Sound Effects API.
+A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech, Sound Effects, and Music API.
 
 ## Features
 
 - Text-to-Speech generation and streaming
 - Sound effects generation from text descriptions
+- Music generation from prompts or composition plans
 - Voice management (list, get, create, update, delete)
 - Voice Library access (search 10,000+ community voices)
 - Voice Slot Manager for automatic slot management within account limits
@@ -107,6 +108,34 @@ audio = client.sound_effects.generate("gentle rain", loop: true)
 
 # Convenience method
 audio = client.generate_sound_effect("explosion")
+```
+
+### Music
+
+```ruby
+# Generate music from a text prompt
+audio = client.music.generate("upbeat jazz piano solo")
+audio.save_to_file("jazz.mp3")
+
+# With options (duration, instrumental-only)
+audio = client.music.generate(
+  "epic orchestral battle theme",
+  music_length_ms: 30_000,
+  force_instrumental: true
+)
+
+# Using a composition plan (create_plan is free, no credits used)
+plan = client.music.create_plan("lo-fi hip hop beats", music_length_ms: 60_000)
+audio = client.music.generate(composition_plan: plan)
+audio.save_to_file("lo-fi.mp3")
+
+# Streaming
+File.open("song.mp3", "wb") do |file|
+  client.music.stream("ambient electronic") { |chunk| file.write(chunk) }
+end
+
+# Convenience method
+audio = client.generate_music("chill acoustic guitar")
 ```
 
 ### Voice Management
