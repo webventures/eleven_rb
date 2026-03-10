@@ -4,11 +4,12 @@
 [![CI](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml/badge.svg)](https://github.com/webventures/eleven_rb/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech, Sound Effects, and Music API.
+A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-to-Speech, Speech-to-Speech, Sound Effects, and Music API.
 
 ## Features
 
 - Text-to-Speech generation and streaming
+- Speech-to-Speech voice conversion
 - Sound effects generation from text descriptions
 - Music generation from prompts or composition plans
 - Voice management (list, get, create, update, delete)
@@ -86,6 +87,28 @@ File.open("output.mp3", "wb") do |file|
     file.write(chunk)
   end
 end
+```
+
+### Speech-to-Speech
+
+```ruby
+# Convert audio to a different voice
+audio = client.sts.convert("input.mp3", voice_id: "voice_id")
+audio.save_to_file("output.mp3")
+
+# With options
+audio = client.sts.convert(
+  "input.mp3",
+  voice_id: "voice_id",
+  model_id: "eleven_english_sts_v2",
+  voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+  remove_background_noise: true,
+  output_format: "mp3_44100_192"
+)
+
+# From an IO object
+io = File.open("input.mp3", "rb")
+audio = client.sts.convert(io, voice_id: "voice_id")
 ```
 
 ### Sound Effects

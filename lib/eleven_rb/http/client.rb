@@ -49,9 +49,10 @@ module ElevenRb
       #
       # @param path [String] the API path
       # @param params [Hash] form parameters including files
-      # @return [Hash] parsed JSON response
-      def post_multipart(path, params)
-        request(:post, path, body: params, multipart: true)
+      # @param response_type [Symbol] :json or :binary
+      # @return [Hash, String] parsed JSON or binary response
+      def post_multipart(path, params, response_type: :json)
+        request(:post, path, body: params, multipart: true, response_type: response_type)
       end
 
       # Make a streaming POST request

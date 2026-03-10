@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-10
+
+### Added
+
+- Speech-to-Speech voice conversion via `client.sts.convert` (`POST /v1/speech-to-speech/{voice_id}`)
+- `Client#speech_to_speech` resource with `sts` alias
+- Accepts file paths (String) or IO objects (IO, StringIO, Tempfile) for audio input
+- Multipart upload with binary response support
+- Default model: `eleven_english_sts_v2`
+
+### Changed
+
+- `Resources::Base#post_multipart` and `HTTP::Client#post_multipart` now accept `response_type:` parameter (defaults to `:json`, backwards-compatible)
+
 ## [0.3.0] - 2026-02-08
 
 ### Added

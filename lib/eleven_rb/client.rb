@@ -79,6 +79,14 @@ module ElevenRb
       @user ||= Resources::User.new(http_client)
     end
 
+    # Speech-to-speech resource
+    #
+    # @return [Resources::SpeechToSpeech]
+    def speech_to_speech
+      @speech_to_speech ||= Resources::SpeechToSpeech.new(http_client)
+    end
+    alias sts speech_to_speech
+
     # Sound effects resource
     #
     # @return [Resources::SoundEffects]

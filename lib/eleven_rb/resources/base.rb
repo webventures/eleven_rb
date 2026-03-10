@@ -64,9 +64,10 @@ module ElevenRb
       #
       # @param path [String]
       # @param params [Hash]
-      # @return [Hash]
-      def post_multipart(path, params)
-        http_client.post_multipart(path, params)
+      # @param response_type [Symbol] :json or :binary
+      # @return [Hash, String]
+      def post_multipart(path, params, response_type: :json)
+        http_client.post_multipart(path, params, response_type: response_type)
       end
 
       # Validate presence of a value
