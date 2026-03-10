@@ -12,6 +12,7 @@ module ElevenRb
         'eleven_monolingual_v1' => 0.30,
         'eleven_multilingual_v1' => 0.30,
         'eleven_multilingual_v2' => 0.30,
+        'eleven_v3' => 0.30,
         'eleven_turbo_v2' => 0.18,
         'eleven_turbo_v2_5' => 0.18,
         'eleven_english_sts_v2' => 0.30,
@@ -23,11 +24,12 @@ module ElevenRb
 
       # Initialize cost info
       #
-      # @param text [String] the text being converted
+      # @param text [String, nil] the text being converted
+      # @param character_count [Integer, nil] direct character count (alternative to text)
       # @param voice_id [String] the voice ID
       # @param model_id [String] the model ID
-      def initialize(text:, voice_id:, model_id:)
-        @character_count = text.length
+      def initialize(voice_id:, model_id:, text: nil, character_count: nil)
+        @character_count = character_count || text&.length || 0
         @voice_id = voice_id
         @model_id = model_id
       end
