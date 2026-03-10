@@ -101,6 +101,14 @@ module ElevenRb
       @music ||= Resources::Music.new(http_client)
     end
 
+    # Text-to-dialogue resource
+    #
+    # @return [Resources::TextToDialogue]
+    def text_to_dialogue
+      @text_to_dialogue ||= Resources::TextToDialogue.new(http_client)
+    end
+    alias dialogue text_to_dialogue
+
     # Voice slot manager
     #
     # @return [VoiceSlotManager]

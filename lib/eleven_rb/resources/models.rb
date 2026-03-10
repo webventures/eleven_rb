@@ -54,6 +54,13 @@ module ElevenRb
         get('eleven_multilingual_v2') || tts_capable.first
       end
 
+      # Get the latest/most capable model
+      #
+      # @return [Objects::Model, nil]
+      def latest
+        get('eleven_v3') || default
+      end
+
       # Get model IDs as array
       #
       # @return [Array<String>]

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-03-10
+
+### Added
+
+- Text-to-Dialogue multi-speaker audio generation via `client.text_to_dialogue.generate` (`POST /v1/text-to-dialogue`)
+- `Client#text_to_dialogue` resource with `dialogue` alias
+- Multi-speaker input validation (max 10 unique voices, 5000 character limit)
+- `eleven_v3` model added to `CostInfo::COST_PER_1K_CHARS` ($0.30/1K chars)
+- `Models#latest` method returning the most capable model (`eleven_v3`)
+- Audio tags support via v3 model (`[laughs]`, `[whispers]`, `[excited]`, etc.)
+- `CostInfo` now accepts `character_count:` keyword as alternative to `text:`
+- TTS generation with word-level timestamps via `client.tts.generate_with_timestamps`
+
+### Changed
+
+- `CostInfo#initialize` signature: `text:` is now optional when `character_count:` is provided (backwards-compatible)
+
 ## [0.4.0] - 2026-03-10
 
 ### Added

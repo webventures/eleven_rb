@@ -8,11 +8,11 @@ Gem::Specification.new do |spec|
   spec.authors = ['Web Ventures Ltd']
   spec.email = ['gems@dev.webven.nz']
 
-  spec.summary = 'Ruby client for the ElevenLabs Text-to-Speech API'
+  spec.summary = 'Ruby client for the ElevenLabs Audio AI API'
   spec.description = <<~DESC
-    A well-structured Ruby gem for ElevenLabs TTS with voice library management,
-    streaming support, voice slot optimization, and comprehensive callbacks for
-    logging, error tracking, and cost monitoring.
+    A comprehensive Ruby client for ElevenLabs covering Text-to-Speech,
+    Speech-to-Speech, Text-to-Dialogue, Sound Effects, and Music generation
+    with voice management, streaming, and built-in cost tracking.
   DESC
   spec.homepage = 'https://github.com/webventures/eleven_rb'
   spec.license = 'MIT'
