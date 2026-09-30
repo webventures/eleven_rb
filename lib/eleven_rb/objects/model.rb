@@ -18,6 +18,16 @@ module ElevenRb
       attribute :max_characters_request_free_user
       attribute :max_characters_request_subscribed_user
       attribute :concurrency_group
+      attribute :model_rates
+      attribute :maximum_text_length_per_request
+      attribute :requires_alpha_access, type: :boolean
+
+      # Voice settings keys this model honours (from ModelCapabilities)
+      #
+      # @return [Array<Symbol>]
+      def supported_voice_settings
+        ModelCapabilities.supported_voice_settings(model_id)
+      end
 
       # Check if this model supports a given language
       #

@@ -60,6 +60,7 @@ module ElevenRb
         retry_delay: config.retry_delay,
         retry_statuses: config.retry_statuses,
         logger: config.logger,
+        strict_voice_settings: config.strict_voice_settings,
         on_request: config.on_request,
         on_response: config.on_response,
         on_error: config.on_error,
@@ -79,6 +80,7 @@ require_relative 'eleven_rb/errors'
 require_relative 'eleven_rb/callbacks'
 require_relative 'eleven_rb/instrumentation'
 require_relative 'eleven_rb/configuration'
+require_relative 'eleven_rb/model_capabilities'
 
 # HTTP layer
 require_relative 'eleven_rb/http/client'

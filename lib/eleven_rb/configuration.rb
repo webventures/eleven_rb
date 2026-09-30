@@ -21,12 +21,13 @@ module ElevenRb
       open_timeout: 10,
       max_retries: 3,
       retry_delay: 1.0,
-      retry_statuses: [429, 500, 502, 503, 504].freeze
+      retry_statuses: [429, 500, 502, 503, 504].freeze,
+      strict_voice_settings: false
     }.freeze
 
     attr_accessor :api_key, :base_url, :timeout, :open_timeout,
                   :max_retries, :retry_delay, :retry_statuses,
-                  :logger
+                  :logger, :strict_voice_settings
 
     # Initialize a new configuration
     #
@@ -39,6 +40,8 @@ module ElevenRb
     # @option options [Float] :retry_delay Base delay between retries in seconds (default: 1.0)
     # @option options [Array<Integer>] :retry_statuses HTTP status codes to retry (default: [429, 500, 502, 503, 504])
     # @option options [Logger] :logger Logger instance for debug output
+    # @option options [Boolean] :strict_voice_settings Raise instead of warn when a voice setting the
+    #   model does not honour is passed (default: false)
     # @option options [Proc] :on_request Callback before each request
     # @option options [Proc] :on_response Callback after successful response
     # @option options [Proc] :on_error Callback when an error occurs
@@ -87,7 +90,8 @@ module ElevenRb
         timeout: timeout,
         open_timeout: open_timeout,
         max_retries: max_retries,
-        retry_delay: retry_delay
+        retry_delay: retry_delay,
+        strict_voice_settings: strict_voice_settings
       }
     end
   end

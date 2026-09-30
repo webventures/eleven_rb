@@ -32,9 +32,11 @@ module ElevenRb
       # @param path [String] the API path
       # @param body [Hash] request body
       # @param response_type [Symbol] :json or :binary
-      # @return [Hash, Array, String] parsed response
-      def post(path, body = {}, response_type: :json)
-        request(:post, path, body: body, response_type: response_type)
+      # @param with_meta [Boolean] when true, return `{ body:, headers: }` instead of the body alone
+      #   (headers as a Hash of lower-cased String keys to String values)
+      # @return [Hash, Array, String] parsed response (or `{ body:, headers: }` with with_meta)
+      def post(path, body = {}, response_type: :json, with_meta: false)
+        request(:post, path, body: body, response_type: response_type, with_meta: with_meta)
       end
 
       # Make a DELETE request
@@ -68,7 +70,7 @@ module ElevenRb
       private
 
       def request(method, path, body: nil, params: nil, response_type: :json, multipart: false, stream: false,
-                  attempt: 1, &block)
+                  attempt: 1, with_meta: false, &block)
         config.validate!
         url = "#{config.base_url}#{path}"
         start_time = Time.now
@@ -86,15 +88,12 @@ module ElevenRb
           # Trigger after response callback
           config.trigger(:on_response, method: method, path: path, response: response, duration: duration)
 
-          # Return binary data directly
-          return response.body if response_type == :binary && response.success?
-
-          handle_response(response)
+          build_result(response, response_type, with_meta)
         rescue Errors::RateLimitError => e
           config.trigger(:on_rate_limit, retry_after: e.retry_after, error: e)
-          handle_retry(e, method, path, body, params, response_type, multipart, stream, attempt, &block)
+          handle_retry(e, method, path, body, params, response_type, multipart, stream, attempt, with_meta, &block)
         rescue Errors::ServerError => e
-          handle_retry(e, method, path, body, params, response_type, multipart, stream, attempt, &block)
+          handle_retry(e, method, path, body, params, response_type, multipart, stream, attempt, with_meta, &block)
         rescue Errors::Base => e
           config.trigger(:on_error, error: e, method: method, path: path,
                                     context: { body: sanitize_body_for_logging(body) })
@@ -105,6 +104,17 @@ module ElevenRb
                                     context: { body: sanitize_body_for_logging(body) })
           raise wrapped_error
         end
+      end
+
+      def build_result(response, response_type, with_meta)
+        # Return binary data directly
+        result = if response_type == :binary && response.success?
+                   response.body
+                 else
+                   handle_response(response)
+                 end
+
+        with_meta ? { body: result, headers: normalize_headers(response) } : result
       end
 
       def execute_request(method, url, body, params, multipart, stream, &block)
@@ -210,7 +220,7 @@ module ElevenRb
         raise error_class.new(message, **error_kwargs)
       end
 
-      def handle_retry(error, method, path, body, params, response_type, multipart, stream, attempt, &block)
+      def handle_retry(error, method, path, body, params, response_type, multipart, stream, attempt, with_meta, &block)
         raise error if attempt > config.max_retries || !config.retry_statuses.include?(error.http_status)
 
         delay = if error.is_a?(Errors::RateLimitError) && error.retry_after
@@ -224,7 +234,17 @@ module ElevenRb
         sleep(delay)
 
         request(method, path,
-                body: body, params: params, response_type: response_type, multipart: multipart, stream: stream, attempt: attempt + 1, &block)
+                body: body, params: params, response_type: response_type, multipart: multipart, stream: stream,
+                attempt: attempt + 1, with_meta: with_meta, &block)
+      end
+
+      # Response headers as a plain Hash of lower-cased String keys to String values
+      # (HTTParty exposes multi-value arrays; the first value is kept)
+      def normalize_headers(response)
+        raw = response.headers.respond_to?(:to_hash) ? response.headers.to_hash : response.headers.to_h
+        raw.each_with_object({}) do |(key, value), out|
+          out[key.to_s.downcase] = value.is_a?(Array) ? value.first : value
+        end
       end
 
       def wrap_error(error)

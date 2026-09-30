@@ -37,6 +37,51 @@ RSpec.describe ElevenRb::Objects::Audio do
     it 'returns mp3 for mp3 format' do
       expect(audio.extension).to eq('mp3')
     end
+
+    it 'maps opus formats to ogg' do
+      opus = described_class.new(data: '', format: 'opus_48000_128', voice_id: '', text: '')
+      expect(opus.extension).to eq('ogg')
+      expect(opus.content_type).to eq('audio/ogg')
+    end
+
+    it 'still maps wav formats' do
+      wav = described_class.new(data: '', format: 'wav_44100', voice_id: '', text: '')
+      expect(wav.extension).to eq('wav')
+      expect(wav.content_type).to eq('audio/wav')
+    end
+
+    it 'leaves ulaw formats as before' do
+      ulaw = described_class.new(data: '', format: 'ulaw_8000', voice_id: '', text: '')
+      expect(ulaw.extension).to eq('bin')
+      expect(ulaw.content_type).to eq('application/octet-stream')
+    end
+  end
+
+  describe 'response metadata' do
+    it 'defaults to no metadata' do
+      expect(audio.request_id).to be_nil
+      expect(audio.character_cost).to be_nil
+      expect(audio.dropped_settings).to eq([])
+    end
+
+    it 'exposes request_id, character_cost and dropped_settings' do
+      with_meta = described_class.new(
+        data: 'x', format: 'mp3_44100_128', voice_id: 'v', text: 't',
+        request_id: 'req_1', character_cost: 12, dropped_settings: %i[speed]
+      )
+
+      expect(with_meta.request_id).to eq('req_1')
+      expect(with_meta.character_cost).to eq(12)
+      expect(with_meta.dropped_settings).to eq(%i[speed])
+      expect(with_meta.dropped_settings).to be_frozen
+    end
+
+    it 'does not freeze the caller array' do
+      dropped = %i[speed]
+      described_class.new(data: 'x', format: 'mp3_44100_128', voice_id: 'v', text: 't', dropped_settings: dropped)
+
+      expect(dropped).not_to be_frozen
+    end
   end
 
   describe '#character_count' do

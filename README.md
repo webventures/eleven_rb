@@ -11,6 +11,7 @@ A Ruby client for the [ElevenLabs](https://try.elevenlabs.io/qyk2j8gumrjz) Text-
 - Text-to-Speech generation and streaming
 - Speech-to-Speech voice conversion
 - Text-to-Dialogue multi-speaker generation with audio tags
+- Eleven v4 support, with per-model voice-settings filtering and text caps
 - Sound effects generation from text descriptions
 - Music generation from prompts or composition plans
 - Voice management (list, get, create, update, delete)
@@ -74,7 +75,7 @@ audio.save_to_file("output.mp3")
 audio = client.tts.generate(
   "Hello world",
   voice_id: "voice_id",
-  model_id: "eleven_v3",             # Most expressive, 70+ languages, audio tags
+  model_id: "eleven_v4",             # Most expressive; audio tags; see "Eleven v4" below
   voice_settings: {
     stability: 0.5,
     similarity_boost: 0.75
@@ -88,7 +89,71 @@ File.open("output.mp3", "wb") do |file|
     file.write(chunk)
   end
 end
+
+# Word-level timestamps
+result = client.tts.generate_with_timestamps("Hello world", voice_id: "voice_id")
+result[:audio]                 # => ElevenRb::Objects::Audio
+result[:alignment]             # => { "characters" => [...], "character_start_times_seconds" => [...], ... }
+result[:normalized_alignment]
+result[:request_id]            # from the request-id response header
+result[:character_cost]        # Integer, from the character-cost response header
 ```
+
+Optional keywords on `generate`, `stream` and `generate_with_timestamps` (each is left out of the request when nil):
+`language_code`, `apply_text_normalization`, `seed`, `previous_text`, `next_text`, `previous_request_ids`,
+`next_request_ids`, `pronunciation_dictionary_locators`, `use_pvc_as_ivc`.
+
+### Eleven v4
+
+`eleven_v4` (and the cheaper, faster `eleven_v4_turbo`) take up to 10,000 characters per request.
+
+```ruby
+audio = client.tts.generate(
+  "[sighs] Right... let's try that one more time.",
+  voice_id: "voice_id",
+  model_id: "eleven_v4",
+  voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+  seed: 42,                                   # reproducible re-rolls
+  previous_text: "That did not go to plan.",  # continuity with the take before
+  next_text: "Here we go."                    # ...and the one after
+)
+audio.request_id        # pass as previous_request_ids: / next_request_ids: on neighbouring takes
+audio.character_cost
+audio.dropped_settings  # => [] (voice settings the gem removed, see below)
+```
+
+- **Only `stability` and `similarity_boost` take effect.** The API accepts `speed`, `style` and
+  `use_speaker_boost` on v4 and silently ignores them, so the gem drops them from the request, logs a
+  warning through `logger`, and lists them on `audio.dropped_settings`. Set
+  `strict_voice_settings: true` on the client to raise `ElevenRb::Errors::ValidationError` instead.
+  Only those known keys are ever dropped: a voice-setting key the gem does not know passes through
+  unchanged on every model, so new API fields keep working.
+  Pace a v4 take with the text (ellipses, pause tags), not `speed`.
+- **SSML `<break time="…"/>` tags are ignored** by v4 (no pause is produced). Use an audio tag or
+  punctuation for pauses.
+- **Audio tags** go in square brackets inside the text: `[sighs]`, `[whispers]`, `[laughs]`,
+  `[short pause]`. Note that tags appear in the returned alignment like any other characters.
+- **Continuity**: `previous_text` / `next_text` (or `previous_request_ids` / `next_request_ids`) tell the
+  model what surrounds a take, so stitched takes keep a consistent delivery.
+- **`seed`** makes v4 generation reproducible, so a re-roll changes one thing at a time.
+
+`ElevenRb::ModelCapabilities` answers these questions for any model id:
+
+```ruby
+ElevenRb::ModelCapabilities.supported_voice_settings("eleven_v4")  # => [:stability, :similarity_boost]
+ElevenRb::ModelCapabilities.max_text_length("eleven_v3")           # => 5000
+ElevenRb::ModelCapabilities.supports?("eleven_v4", :audio_tags)     # => true
+ElevenRb::ModelCapabilities.supports?("eleven_v4", :ssml_break)     # => false
+```
+
+| Model family | Voice settings honoured | Max chars | Audio tags | SSML breaks |
+|---|---|---|---|---|
+| `eleven_v4`, `eleven_v4_turbo` | stability, similarity_boost | 10,000 | yes | no |
+| `eleven_v3` | stability, similarity_boost | 5,000 | yes | no |
+| `eleven_v3_conversational` | stability, similarity_boost, use_speaker_boost | 5,000 | yes | no |
+| `eleven_flash_v2_5`, `eleven_turbo_v2_5` | all five (incl. style, speed) | 40,000 | no | yes |
+| `eleven_flash_v2`, `eleven_turbo_v2` | all five | 30,000 | no | yes |
+| `eleven_multilingual_v2` and others | all five | 10,000 | no | yes |
 
 ### Speech-to-Speech
 
@@ -123,30 +188,42 @@ audio = client.text_to_dialogue.generate([
 ])
 audio.save_to_file("dialogue.mp3")
 
-# With options
+# With options (the default model is eleven_v4)
 audio = client.dialogue.generate(
   inputs,
-  model_id: "eleven_v3",
+  model_id: "eleven_v4",
   language_code: "en",
-  settings: { stability: 0.5 },
+  settings: { stability: 0.5, similarity: 0.75 },  # sent to the API unchanged
   seed: 42,
+  previous_text: "Earlier in the scene...",
   output_format: "mp3_44100_192"
 )
+
+# With timestamps and per-speaker segments
+result = client.dialogue.generate_with_timestamps(inputs)
+result[:audio]           # => ElevenRb::Objects::Audio
+result[:alignment]       # character timings
+result[:voice_segments]  # which voice speaks when
+result[:request_id]
 ```
+
+The hard text cap follows the model (10,000 characters for `eleven_v4`, 5,000 for `eleven_v3`); above
+2,000 characters the gem logs a warning, since shorter dialogue requests give more reliable results.
 
 ### Audio Tags
 
-The `eleven_v3` model supports inline audio tags for expressive speech:
+The `eleven_v4` and `eleven_v3` models support inline audio tags, in square brackets, for expressive speech
+(`ElevenRb::ModelCapabilities.supports?(model_id, :audio_tags)`):
 
 ```ruby
 audio = client.tts.generate(
   "[excited] Oh wow, this is AMAZING! [laughs] I can't believe it...",
   voice_id: "voice_id",
-  model_id: "eleven_v3"
+  model_id: "eleven_v4"
 )
 ```
 
-Supported tags include `[laughs]`, `[whispers]`, `[sighs]`, `[excited]`, `[sarcastic]`, `[curious]`, `[pause]`, and more. Use CAPS for emphasis, `...` for pauses, and `—` for interruptions. See the [ElevenLabs v3 documentation](https://elevenlabs.io/docs/guides/audio-tags) for the full list.
+Supported tags include `[laughs]`, `[whispers]`, `[sighs]`, `[excited]`, `[sarcastic]`, `[curious]`, `[short pause]`, and more. Use CAPS for emphasis, `...` for pauses, and `—` for interruptions. See the [ElevenLabs audio tags documentation](https://elevenlabs.io/docs/guides/audio-tags) for the full list.
 
 ### Sound Effects
 
@@ -289,7 +366,7 @@ client = ElevenRb::Client.new(
     Sentry.capture_exception(error, extra: { path: path })
   },
 
-  # Cost tracking
+  # Cost tracking (add request_id: to also receive the API's request id)
   on_audio_generated: ->(audio:, voice_id:, text:, cost_info:) {
     UsageRecord.create!(
       characters: cost_info[:character_count],
@@ -311,8 +388,11 @@ client = ElevenRb::Client.new(
 models = client.models.list
 models.each { |m| puts "#{m.name} (#{m.model_id})" }
 
-# Get the latest/most capable model
-client.models.latest  # => "eleven_v3"
+# Find one model
+client.models.find("eleven_v4")  # => ElevenRb::Objects::Model (get is an alias)
+
+# Get the latest/most capable model: eleven_v4, else eleven_v3, else the default
+client.models.latest.model_id  # => "eleven_v4"
 
 # Get multilingual models
 client.models.multilingual
@@ -343,7 +423,8 @@ client = ElevenRb::Client.new(
   open_timeout: 10,          # Connection timeout
   max_retries: 3,            # Max retry attempts
   retry_delay: 1.0,          # Base delay between retries
-  logger: Rails.logger       # Optional logger
+  logger: Rails.logger,      # Optional logger (receives dropped-setting warnings)
+  strict_voice_settings: false # true: raise instead of dropping settings a model ignores
 )
 ```
 

@@ -28,6 +28,10 @@ module ElevenRb
 
     # Trigger a callback if it's configured
     #
+    # A callback that names its keywords explicitly (no `**rest`) receives only
+    # the keywords it declares, so callbacks written before a keyword was added
+    # (e.g. `request_id:` on on_audio_generated in 1.1.0) keep working.
+    #
     # @param callback_name [Symbol] the name of the callback
     # @param kwargs [Hash] keyword arguments to pass to the callback
     # @return [Object, nil] the return value of the callback, or nil
@@ -36,12 +40,32 @@ module ElevenRb
       return unless callback.respond_to?(:call)
 
       begin
-        callback.call(**kwargs)
+        callback.call(**accepted_callback_kwargs(callback, kwargs))
       rescue StandardError => e
         # Don't let callback errors break the main flow
         warn "[ElevenRb] Callback error in #{callback_name}: #{e.message}"
         nil
       end
+    end
+
+    private
+
+    def accepted_callback_kwargs(callback, kwargs)
+      params = callback_parameters(callback)
+      return kwargs if params.nil? || params.any? { |type, _| type == :keyrest }
+
+      accepted = params.filter_map { |type, name| name if %i[key keyreq].include?(type) }
+      return kwargs if accepted.empty?
+
+      kwargs.slice(*accepted)
+    end
+
+    def callback_parameters(callback)
+      return callback.parameters if callback.respond_to?(:parameters)
+
+      callback.method(:call).parameters
+    rescue NameError
+      nil
     end
   end
 end

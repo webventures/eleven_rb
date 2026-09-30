@@ -6,7 +6,8 @@ module ElevenRb
   module Objects
     # Represents generated audio data
     class Audio
-      attr_reader :data, :format, :voice_id, :text, :model_id
+      attr_reader :data, :format, :voice_id, :text, :model_id,
+                  :request_id, :character_cost, :dropped_settings
 
       # Initialize audio object
       #
@@ -15,12 +16,20 @@ module ElevenRb
       # @param voice_id [String] the voice ID used
       # @param text [String] the text that was converted
       # @param model_id [String, nil] the model ID used
-      def initialize(data:, format:, voice_id:, text:, model_id: nil)
+      # @param request_id [String, nil] the API's `request-id` response header (usable as
+      #   previous_request_ids / next_request_ids on a later request)
+      # @param character_cost [Integer, nil] the API's `character-cost` response header
+      # @param dropped_settings [Array<Symbol>] voice settings the gem dropped because the model ignores them
+      def initialize(data:, format:, voice_id:, text:, model_id: nil, request_id: nil, character_cost: nil,
+                     dropped_settings: [])
         @data = data
         @format = format
         @voice_id = voice_id
         @text = text
         @model_id = model_id
+        @request_id = request_id
+        @character_cost = character_cost
+        @dropped_settings = Array(dropped_settings).dup.freeze
       end
 
       # Save audio to a file
@@ -62,7 +71,7 @@ module ElevenRb
           'audio/mpeg'
         when /pcm/
           'audio/pcm'
-        when /ogg/
+        when /ogg|opus/
           'audio/ogg'
         when /wav/
           'audio/wav'
@@ -82,7 +91,7 @@ module ElevenRb
           'mp3'
         when /pcm/
           'pcm'
-        when /ogg/
+        when /ogg|opus/
           'ogg'
         when /wav/
           'wav'
