@@ -51,6 +51,24 @@ module ElevenRb
         http_client.post(path, body, response_type: :binary)
       end
 
+      # Make a JSON POST request and also return the response headers
+      #
+      # @param path [String]
+      # @param body [Hash]
+      # @return [Hash] `{ body: Hash, headers: Hash<String, String> }`
+      def post_with_meta(path, body = {})
+        http_client.post(path, body, response_type: :json, with_meta: true)
+      end
+
+      # Make a binary POST request and also return the response headers
+      #
+      # @param path [String]
+      # @param body [Hash]
+      # @return [Hash] `{ body: String, headers: Hash<String, String> }`
+      def post_binary_with_meta(path, body = {})
+        http_client.post(path, body, response_type: :binary, with_meta: true)
+      end
+
       # Make a streaming POST request
       #
       # @param path [String]
