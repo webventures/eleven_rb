@@ -240,7 +240,7 @@ module ElevenRb
         settings, dropped = Objects::VoiceSettings.for_model(model_id, voice_settings)
         return [settings, dropped] if dropped.empty?
 
-        message = "voice settings #{dropped.map(&:to_s).join(', ')} are not supported by #{model_id} " \
+        message = "voice settings #{dropped.join(', ')} are not supported by #{model_id} " \
                   "(supported: #{ModelCapabilities.supported_voice_settings(model_id).join(', ')})"
         raise Errors::ValidationError, message if http_client.config.strict_voice_settings
 
